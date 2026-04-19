@@ -1,1 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HireGreen — Find Your Dream Job</title>
+  <meta name="description" content="HireGreen: The modern job board connecting top talent with sustainable, forward-thinking companies.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<!-- ══════════════════ NAVBAR ══════════════════ -->
+<nav class="navbar">
+  <div class="nav-brand" onclick="App.page('page-home')">
+    <div class="brand-icon">🌿</div>
+    HireGreen
+  </div>
+
+  <ul class="nav-links">
+    <li><a onclick="App.page('page-home')" data-page="page-home">Home</a></li>
+    <li><a onclick="App.page('page-jobs'); App.filterJobs();" data-page="page-jobs">Browse Jobs</a></li>
+    <li><a onclick="App.showAuth('register')" data-page="page-post">For Employers</a></li>
+    <li><a onclick="App.openDash()">Dashboard</a></li>
+  </ul>
+
+  <div class="nav-actions" id="nav-auth"></div>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a onclick="App.page('page-home')">🏠 Home</a>
+  <a onclick="App.page('page-jobs');App.filterJobs()">🔍 Browse Jobs</a>
+  <a onclick="App.openDash()">📊 Dashboard</a>
+  <div id="mobile-auth"></div>
+</div>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main class="main">
+
+<!-- ─────────── HOME ─────────── -->
+<div id="page-home" class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">🌿 500+ Remote & On-site Jobs</div>
+    <h1>Find Your <em>Dream Job</em><br>With HireGreen</h1>
+    <p>Connect with innovative, sustainability-focused companies. Discover roles that match your skills, values, and ambitions.</p>
+
+    <div class="search-hero">
+      <input id="hero-search" type="text" placeholder="Job title, skill, or company…">
+      <select id="hero-cat">
+        <option value="">All Categories</option>
+        <option>Engineering</option>
+        <option>Design</option>
+        <option>Product</option>
+        <option>Data Science</option>
+        <option>Marketing</option>
+        <option>Sales</option>
+      </select>
+      <button id="hero-search-btn">🔍 Search</button>
+    </div>
+
+    <div class="hero-tags">
+      <span class="hero-tag">React Developer</span>
+      <span class="hero-tag">Remote</span>
+      <span class="hero-tag">Data Science</span>
+      <span class="hero-tag">UI/UX Design</span>
+      <span class="hero-tag">Product Manager</span>
+      <span class="hero-tag">DevOps</span>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-jobs">0</div><div class="hero-stat-label">Live Jobs</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-cos">0</div><div class="hero-stat-label">Companies</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-placed">0</div><div class="hero-stat-label">Candidates Placed</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" id="stat-remote">0</div><div class="hero-stat-label">Remote Roles</div></div>
+    </div>
+  </div>
+
+  <!-- Featured Jobs -->
+  <div class="section" style="background:var(--n50);border-top:1px solid var(--border);">
+    <div class="container">
+      <div class="section-header flex justify-between items-center flex-wrap gap-3">
+        <div>
+          <div class="section-label">🔥 Hot Opportunities</div>
+          <div class="section-title">Featured Jobs</div>
+          <div class="section-sub">Hand-picked roles at top companies</div>
+        </div>
+        <button class="btn btn-outline" onclick="App.page('page-jobs');App.filterJobs()">View All Jobs →</button>
+      </div>
+      <div class="jobs-grid" id="home-jobs"></div>
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <div class="section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-label">Browse by Field</div>
+        <div class="section-title">Explore Categories</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px">
+        ${[
+          ['💻','Engineering','28 jobs'],
+          ['🎨','Design','12 jobs'],
+          ['📊','Data Science','19 jobs'],
+          ['📦','Product','9 jobs'],
+          ['📣','Marketing','15 jobs'],
+          ['🤝','Sales','11 jobs'],
+          ['⚙️','DevOps','8 jobs'],
+          ['🧪','QA','6 jobs'],
+        ].map(([ico,cat,count])=>`
+        <div style="background:white;border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .2s"
+          onclick="document.getElementById('filter-cat').value='${cat}';App.page('page-jobs');App.filterJobs();"
+          onmouseover="this.style.borderColor='var(--g300)';this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-green)'"
+          onmouseout="this.style.borderColor='';this.style.transform='';this.style.boxShadow=''">
+          <div style="font-size:1.8rem;margin-bottom:8px">${ico}</div>
+          <div style="font-weight:700;font-size:.88rem;color:var(--n800)">${cat}</div>
+          <div style="font-size:.75rem;color:var(--g600);margin-top:3px">${count}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- Companies -->
+  <div class="section" style="background:var(--g50);border-top:1px solid var(--border-green);">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-label">Top Employers</div>
+        <div class="section-title">Companies Hiring Now</div>
+      </div>
+      <div class="company-grid" id="company-grid"></div>
+    </div>
+  </div>
+
+  <!-- How It Works -->
+  <div class="section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-label">Simple Process</div>
+        <div class="section-title">How HireGreen Works</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;text-align:center">
+        ${[
+          ['🔍','Search Jobs','Browse hundreds of roles filtered by your skills, location and preferences.'],
+          ['👤','Build Profile','Create a standout profile that gets noticed by top employers.'],
+          ['📝','Apply Easily','One-click apply with your resume and a personalized cover letter.'],
+          ['🎉','Get Hired','Receive offers and land your dream job — all on HireGreen.'],
+        ].map(([ico,title,desc],i)=>`
+        <div style="position:relative">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--g100);border:2px solid var(--g200);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 16px">
+            ${ico}
+          </div>
+          <div style="position:absolute;top:24px;left:calc(50% + 32px);right:0;height:2px;background:linear-gradient(90deg,var(--g300),transparent);display:${i<3?'block':'none'}"></div>
+          <div style="font-weight:700;color:var(--n800);margin-bottom:6px">${title}</div>
+          <div style="font-size:.85rem;color:var(--n500);line-height:1.6">${desc}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Banner -->
+  <div style="background:linear-gradient(135deg,var(--g600),var(--g800));padding:64px 2rem;text-align:center;">
+    <div style="font-family:'Fraunces',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;color:white;margin-bottom:12px">
+      Ready to grow your career? 🌱
+    </div>
+    <div style="color:rgba(255,255,255,.75);margin-bottom:28px;font-size:1rem">
+      Join 10,000+ professionals who found their dream jobs on HireGreen
+    </div>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-white btn-lg" onclick="App.showAuth('register')">Get Started Free →</button>
+      <button class="btn btn-lg" style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3)" onclick="App.page('page-jobs');App.filterJobs()">Browse Jobs</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background:var(--n900);padding:48px 2rem 24px;color:rgba(255,255,255,.6)">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;flex-wrap:wrap">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--g500),var(--g700));border-radius:8px;display:flex;align-items:center;justify-content:center">🌿</div>
+            <span style="font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;color:white">HireGreen</span>
+          </div>
+          <p style="font-size:.85rem;line-height:1.7;max-width:260px">Connecting passionate professionals with innovative, sustainability-focused companies worldwide.</p>
+        </div>
+        <div>
+          <div style="color:white;font-weight:700;margin-bottom:12px;font-size:.88rem">For Job Seekers</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:.83rem">
+            <a onclick="App.page('page-jobs')" style="cursor:pointer;color:rgba(255,255,255,.6)">Browse Jobs</a>
+            <a onclick="App.showAuth('register')" style="cursor:pointer;color:rgba(255,255,255,.6)">Create Account</a>
+            <a onclick="App.openDash()" style="cursor:pointer;color:rgba(255,255,255,.6)">My Applications</a>
+          </div>
+        </div>
+        <div>
+          <div style="color:white;font-weight:700;margin-bottom:12px;font-size:.88rem">For Employers</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:.83rem">
+            <a onclick="App.showAuth('register')" style="cursor:pointer;color:rgba(255,255,255,.6)">Post a Job</a>
+            <a onclick="App.openDash()" style="cursor:pointer;color:rgba(255,255,255,.6)">Employer Dashboard</a>
+            <a style="cursor:pointer;color:rgba(255,255,255,.6)">Pricing Plans</a>
+          </div>
+        </div>
+        <div>
+          <div style="color:white;font-weight:700;margin-bottom:12px;font-size:.88rem">Company</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:.83rem">
+            <a style="cursor:pointer;color:rgba(255,255,255,.6)">About Us</a>
+            <a style="cursor:pointer;color:rgba(255,255,255,.6)">Privacy Policy</a>
+            <a style="cursor:pointer;color:rgba(255,255,255,.6)">Contact</a>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;font-size:.8rem">
+        © 2025 HireGreen. Built with ❤️ for a sustainable future.
+      </div>
+    </div>
+  </footer>
+</div><!-- /page-home -->
+
+<!-- ─────────── JOBS LISTING ─────────── -->
+<div id="page-jobs" class="page">
+  <div class="page-head">
+    <div class="container">
+      <div class="section-label">🔍 Job Board</div>
+      <h2>Browse All Jobs</h2>
+      <p>Find your perfect role from hundreds of opportunities</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <!-- Search Bar -->
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+        <div style="flex:1;position:relative;min-width:200px">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--n400)">🔍</span>
+          <input id="search-input" type="text" placeholder="Search jobs, skills, companies…"
+            style="width:100%;padding:11px 14px 11px 38px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Plus Jakarta Sans',sans-serif;font-size:.92rem;outline:none;transition:all .2s"
+            onfocus="this.style.borderColor='var(--g400)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <select id="filter-cat" class="form-control" style="max-width:180px">
+          <option value="">All Categories</option>
+          <option>Engineering</option><option>Design</option><option>Product</option>
+          <option>Data Science</option><option>Marketing</option><option>Sales</option><option>Other</option>
+        </select>
+        <select id="sort-jobs" class="form-control" style="max-width:160px">
+          <option value="newest">Newest First</option>
+          <option value="popular">Most Popular</option>
+          <option value="alpha">A–Z</option>
+        </select>
+        <button class="btn btn-primary" onclick="App.showAuth('register')">+ Post Job</button>
+      </div>
+
+      <div class="two-col">
+        <!-- Sidebar Filters -->
+        <div class="sidebar">
+          <div class="filter-card">
+            <div class="filter-card-head">
+              <span>Filters</span>
+              <span style="font-size:.78rem;font-weight:400;color:var(--g600);cursor:pointer" onclick="document.querySelectorAll('.filter-type,.filter-mode').forEach(c=>c.checked=false);App.filterJobs()">Clear all</span>
+            </div>
+            <div class="filter-section">
+              <div class="filter-label">Job Type</div>
+              <div class="filter-options">
+                <label class="filter-opt"><input type="checkbox" class="filter-type" value="Full-time">Full-time</label>
+                <label class="filter-opt"><input type="checkbox" class="filter-type" value="Part-time">Part-time</label>
+                <label class="filter-opt"><input type="checkbox" class="filter-type" value="Contract">Contract</label>
+                <label class="filter-opt"><input type="checkbox" class="filter-type" value="Internship">Internship</label>
+              </div>
+            </div>
+            <div class="filter-section">
+              <div class="filter-label">Work Mode</div>
+              <div class="filter-options">
+                <label class="filter-opt"><input type="checkbox" class="filter-mode" value="Remote">🌿 Remote</label>
+                <label class="filter-opt"><input type="checkbox" class="filter-mode" value="Hybrid">Hybrid</label>
+                <label class="filter-opt"><input type="checkbox" class="filter-mode" value="On-site">On-site</label>
+              </div>
+            </div>
+            <div class="filter-section">
+              <div class="filter-label">Quick Links</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <button class="btn btn-outline btn-sm w-full" onclick="document.getElementById('search-input').value='Remote';App.filterJobs()">🌿 Remote Jobs</button>
+                <button class="btn btn-outline btn-sm w-full" onclick="document.getElementById('filter-cat').value='Engineering';App.filterJobs()">💻 Engineering</button>
+                <button class="btn btn-outline btn-sm w-full" onclick="document.getElementById('filter-cat').value='Design';App.filterJobs()">🎨 Design</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jobs Grid -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:8px">
+            <div id="job-count" style="font-weight:600;color:var(--n600);font-size:.9rem">0 jobs found</div>
+          </div>
+          <div class="jobs-grid" id="jobs-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────── JOB DETAIL (dynamic) ─────────── -->
+<div id="page-job-detail" class="page"></div>
+
+<!-- ─────────── AUTH ─────────── -->
+<div id="page-auth" class="page">
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <div style="display:inline-flex;align-items:center;gap:8px;font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--g700)">
+          <div class="brand-icon" style="width:30px;height:30px;font-size:.85rem">🌿</div>
+          HireGreen
+        </div>
+      </div>
+      <div class="auth-title" id="auth-mode-label">Welcome back 👋</div>
+      <div class="auth-sub" id="auth-mode-sub">Login to your HireGreen account.</div>
+
+      <div class="auth-toggle">
+        <button class="active" id="auth-tab-login">Login</button>
+        <button id="auth-tab-reg">Register</button>
+      </div>
+
+      <!-- Login Panel -->
+      <div id="login-panel">
+        <div style="background:var(--g50);border:1px solid var(--g200);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:18px;font-size:.82rem;color:var(--g800)">
+          🧪 Demo: <strong>employer@demo.com</strong> / <strong>demo123</strong><br>
+          🧪 Demo: <strong>candidate@demo.com</strong> / <strong>demo123</strong>
+        </div>
+        <form id="login-form">
+          <div class="form-group"><label class="form-label">Email</label><input type="email" id="l-email" class="form-control" placeholder="you@example.com" required autocomplete="email"></div>
+          <div class="form-group"><label class="form-label">Password</label><input type="password" id="l-pw" class="form-control" placeholder="••••••••" required></div>
+          <div id="login-err" class="form-error"></div>
+          <button type="submit" class="btn btn-primary w-full btn-lg" style="margin-top:8px">Login →</button>
+        </form>
+        <div class="auth-switch">Don't have an account? <a onclick="App.showAuth('register')">Sign up free</a></div>
+      </div>
+
+      <!-- Register Panel -->
+      <div id="register-panel" style="display:none">
+        <div style="margin-bottom:18px">
+          <div class="form-label" style="margin-bottom:8px">I am a…</div>
+          <div class="role-toggle">
+            <div class="role-btn active" data-role="candidate">
+              <div class="role-icon">🎯</div>
+              <div class="role-name">Job Seeker</div>
+            </div>
+            <div class="role-btn" data-role="employer">
+              <div class="role-icon">🏢</div>
+              <div class="role-name">Employer</div>
+            </div>
+          </div>
+        </div>
+        <form id="register-form">
+          <div class="form-group"><label class="form-label">Full Name</label><input id="r-name" class="form-control" placeholder="Your full name" required></div>
+          <div class="form-group"><label class="form-label">Email</label><input type="email" id="r-email" class="form-control" placeholder="you@example.com" required autocomplete="email"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Password</label><input type="password" id="r-pw" class="form-control" placeholder="Min 6 chars" required></div>
+            <div class="form-group"><label class="form-label">Confirm</label><input type="password" id="r-cpw" class="form-control" placeholder="Repeat" required></div>
+          </div>
+          <div id="reg-err" class="form-error"></div>
+          <button type="submit" class="btn btn-primary w-full btn-lg" style="margin-top:8px">Create Account →</button>
+        </form>
+        <div class="auth-switch">Already have an account? <a onclick="App.showAuth('login')">Login</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────── EMPLOYER DASHBOARD ─────────── -->
+<div id="page-employer-dash" class="page"></div>
+
+<!-- ─────────── CANDIDATE DASHBOARD ─────────── -->
+<div id="page-candidate-dash" class="page"></div>
+
+</main>
+
+<!-- ══════════════════ APPLY MODAL ══════════════════ -->
+<div class="modal-overlay" id="apply-modal" onclick="if(event.target===this)closeApply()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">📝 Apply for Job</div>
+      <button class="modal-close" onclick="closeApply()">✕</button>
+    </div>
+    <div class="modal-body" id="apply-modal-content"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ TOAST ══════════════════ -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
