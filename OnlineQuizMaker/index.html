@@ -1,1 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizMaster — Create & Take Quizzes</title>
+  <meta name="description" content="QuizMaster: Build and share interactive quizzes. Challenge friends, test knowledge, and track your scores.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<!-- ── NAVBAR ───────────────────────────────── -->
+<nav class="navbar">
+  <a class="nav-logo" onclick="App.nav('page-home')" style="cursor:pointer;">
+    <div class="logo-icon">🧠</div>
+    QuizMaster
+  </a>
+
+  <ul class="nav-links">
+    <li><a onclick="App.nav('page-home')" data-page="page-home" style="cursor:pointer;">Home</a></li>
+    <li><a onclick="App.nav('page-quizzes')" data-page="page-quizzes" style="cursor:pointer;">Browse</a></li>
+    <li><a onclick="App.nav('page-create')" data-page="page-create" style="cursor:pointer;">Create</a></li>
+    <li><a onclick="App.nav('page-myquizzes')" data-page="page-myquizzes" style="cursor:pointer;">My Quizzes</a></li>
+  </ul>
+
+  <div class="nav-auth" id="nav-auth"></div>
+
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a onclick="App.nav('page-home')">🏠 Home</a>
+  <a onclick="App.nav('page-quizzes')">🔍 Browse Quizzes</a>
+  <a onclick="App.nav('page-create')">✏️ Create Quiz</a>
+  <a onclick="App.nav('page-myquizzes')">📋 My Quizzes</a>
+  <div id="mobile-auth"></div>
+</div>
+
+<!-- ── MAIN ──────────────────────────────────── -->
+<main class="main">
+
+  <!-- ── HOME PAGE ─────────────────────────── -->
+  <div id="page-home" class="page">
+    <div class="hero">
+      <div class="hero-badge">✨ Free Quiz Platform</div>
+      <h1>
+        Create. Share.<br>
+        <span class="gradient-text">Master Knowledge.</span>
+      </h1>
+      <p>Build beautiful quizzes in minutes. Challenge anyone, anywhere. Get instant feedback and detailed results.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="App.nav('page-create')">✏️ Create a Quiz</button>
+        <button class="btn btn-ghost btn-lg" onclick="App.nav('page-quizzes')">🔍 Browse Quizzes</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num" id="stat-quizzes">0</div>
+          <div class="stat-label">Quizzes Created</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="stat-questions">0</div>
+          <div class="stat-label">Questions</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="stat-attempts">0</div>
+          <div class="stat-label">Attempts Taken</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="stat-users">0</div>
+          <div class="stat-label">Users</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features">
+      <div class="section-title">Everything you need to Quiz</div>
+      <div class="section-sub">Powerful features, beautifully simple.</div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(108,63,232,0.15)">✏️</div>
+          <h3>Easy Quiz Builder</h3>
+          <p>Create quizzes with multiple-choice questions in seconds. Add descriptions, categories, and time limits.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(255,107,43,0.15)">⚡</div>
+          <h3>Instant Feedback</h3>
+          <p>Get real-time feedback on every answer. See correct answers immediately after each question.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(6,214,160,0.15)">📊</div>
+          <h3>Detailed Results</h3>
+          <p>Review your complete score, correct/wrong answers, and a full breakdown after every quiz.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(255,209,102,0.15)">⏱️</div>
+          <h3>Timed Challenges</h3>
+          <p>Add optional time limits to your quizzes for an extra challenge and competitive edge.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(108,63,232,0.15)">🔐</div>
+          <h3>User Accounts</h3>
+          <p>Sign up to create, manage, and track your quizzes. Edit or delete your quizzes anytime.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(255,107,43,0.15)">📱</div>
+          <h3>Mobile Ready</h3>
+          <p>Fully responsive design — create and take quizzes on any device, any screen size.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Quizzes -->
+    <div class="features" style="padding-top:0;">
+      <div class="section-title">Featured Quizzes</div>
+      <div class="section-sub">Jump right in — try a quiz now.</div>
+      <div class="quiz-grid" id="home-quiz-grid"></div>
+      <div style="text-align:center;margin-top:28px;">
+        <button class="btn btn-ghost" onclick="App.nav('page-quizzes')">View All Quizzes →</button>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div style="padding:60px 2rem;text-align:center;">
+      <div style="max-width:540px;margin:0 auto;background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:48px 32px;position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(108,63,232,0.12),transparent);pointer-events:none;"></div>
+        <div style="font-size:2.5rem;margin-bottom:16px;">🚀</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:10px;">Ready to start?</div>
+        <div style="color:var(--text-muted);margin-bottom:28px;">Create your first quiz in under 2 minutes. No credit card needed.</div>
+        <button class="btn btn-accent btn-lg" onclick="App.nav('page-register')">Get Started Free</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BROWSE QUIZZES ─────────────────────── -->
+  <div id="page-quizzes" class="page">
+    <div class="container-wide">
+      <div class="page-header">
+        <h2>🔍 Browse Quizzes</h2>
+        <p>Explore community-created quizzes across all categories.</p>
+      </div>
+
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="quiz-search" placeholder="Search quizzes...">
+        </div>
+        <select class="form-control" id="cat-filter" style="max-width:180px;">
+          <option value="">All Categories</option>
+          <option>General Knowledge</option>
+          <option>Science</option>
+          <option>Programming</option>
+          <option>History</option>
+          <option>Geography</option>
+          <option>Math</option>
+          <option>Sports</option>
+          <option>Entertainment</option>
+          <option>Other</option>
+        </select>
+        <button class="btn btn-primary" onclick="App.nav('page-create')">+ Create Quiz</button>
+      </div>
+
+      <div class="quiz-grid" id="quiz-grid-all"></div>
+    </div>
+  </div>
+
+  <!-- ── CREATE QUIZ (dynamic) ──────────────── -->
+  <div id="page-create" class="page"></div>
+
+  <!-- ── MY QUIZZES ─────────────────────────── -->
+  <div id="page-myquizzes" class="page">
+    <div class="container-wide">
+      <div class="page-header flex justify-between items-center flex-wrap gap-3">
+        <div>
+          <h2>📋 My Quizzes</h2>
+          <p>Manage all the quizzes you've created.</p>
+        </div>
+        <button class="btn btn-primary" onclick="App.nav('page-create')">+ Create New Quiz</button>
+      </div>
+      <div class="quiz-grid" id="my-quiz-grid"></div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ DETAIL ────────────────────────── -->
+  <div id="page-quiz-detail" class="page"></div>
+
+  <!-- ── TAKE QUIZ (dynamic) ───────────────── -->
+  <div id="page-take" class="page"></div>
+
+  <!-- ── RESULTS (dynamic) ─────────────────── -->
+  <div id="page-results" class="page"></div>
+
+  <!-- ── LOGIN ─────────────────────────────── -->
+  <div id="page-login" class="page">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-title">Welcome back 👋</div>
+        <div class="auth-sub">Login to your QuizMaster account.</div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="login-email" class="form-control" placeholder="you@example.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+          </div>
+          <div id="login-error" style="color:var(--danger);font-size:0.88rem;margin-bottom:12px;"></div>
+          <button type="submit" class="btn btn-primary w-full btn-lg">Login →</button>
+        </form>
+
+        <div class="auth-divider">or</div>
+        <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:14px;font-size:0.85rem;color:var(--text-muted);text-align:center;">
+          🧪 Demo: <strong style="color:var(--text)">demo@quiz.com</strong> / <strong style="color:var(--text)">demo123</strong>
+        </div>
+
+        <div class="auth-switch">
+          Don't have an account? <a onclick="App.nav('page-register')" style="cursor:pointer;">Sign up free</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REGISTER ───────────────────────────── -->
+  <div id="page-register" class="page">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-title">Create Account ✨</div>
+        <div class="auth-sub">Join QuizMaster — it's free forever.</div>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="reg-name" class="form-control" placeholder="Your name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="you@example.com" required autocomplete="email">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input type="password" id="reg-password" class="form-control" placeholder="Min 6 chars" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm Password</label>
+              <input type="password" id="reg-confirm" class="form-control" placeholder="Repeat password" required>
+            </div>
+          </div>
+          <div id="reg-error" style="color:var(--danger);font-size:0.88rem;margin-bottom:12px;"></div>
+          <button type="submit" class="btn btn-primary w-full btn-lg">Create Account →</button>
+        </form>
+
+        <div class="auth-switch">
+          Already have an account? <a onclick="App.nav('page-login')" style="cursor:pointer;">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ────────────────────────────────── -->
+<footer style="position:relative;z-index:1;border-top:1px solid var(--border-light);padding:32px 2rem;text-align:center;color:var(--text-dim);font-size:0.85rem;margin-top:40px;">
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;">
+    <span style="font-size:1.2rem;">🧠</span>
+    <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--text-muted);">QuizMaster</span>
+  </div>
+  <div>Made with ❤️ for learners everywhere</div>
+  <div style="margin-top:12px;display:flex;gap:24px;justify-content:center;">
+    <span onclick="App.nav('page-home')" style="cursor:pointer;color:var(--text-muted);">Home</span>
+    <span onclick="App.nav('page-quizzes')" style="cursor:pointer;color:var(--text-muted);">Browse</span>
+    <span onclick="App.nav('page-create')" style="cursor:pointer;color:var(--text-muted);">Create</span>
+    <span onclick="App.nav('page-register')" style="cursor:pointer;color:var(--text-muted);">Register</span>
+  </div>
+</footer>
+
+<!-- ── TOAST CONTAINER ────────────────────────── -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="app.js"></script>
+<script>
+  // Update home stats
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const quizzes = JSON.parse(localStorage.getItem('qm_quizzes') || '[]');
+      const users = JSON.parse(localStorage.getItem('qm_users') || '[]');
+      const totalQ = quizzes.reduce((s, q) => s + q.questions.length, 0);
+      const totalA = quizzes.reduce((s, q) => s + (q.attempts || 0), 0);
+      animateNum('stat-quizzes', quizzes.length);
+      animateNum('stat-questions', totalQ);
+      animateNum('stat-attempts', totalA);
+      animateNum('stat-users', users.length);
+    }, 100);
+  });
+
+  function animateNum(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let start = 0;
+    const step = Math.ceil(target / 30);
+    const t = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = start.toLocaleString();
+      if (start >= target) clearInterval(t);
+    }, 40);
+  }
+</script>
+</body>
+</html>
